@@ -17,7 +17,7 @@ import drive
 import tkinter as tk
 
 ## Set up the serial connection
-drive.setup(4,9600) # (COM port number,baud rate)
+drive.setup(10,9600) # (COM port number,baud rate)
 
 
 
