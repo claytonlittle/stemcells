@@ -109,9 +109,9 @@ def pulse3(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     # we change some of the times so that the total intervals are accurate.
     # for example, if the "wash" argument is ten minutes, that does not account
     # for the time of the actual washing. We substract that time here.
-    bTT = (round(bVOL/bSPD) + 0.5)  # Transfer Time of blank media
-    wTT = (round(wVOL/wSPD) + 0.5)  # Transfer Time of waste media
-    lTT = (round(lVOL/lSPD) + 0.5)  # Transfer Time of concentrated ligand
+    bTT = (bVOL/bSPD + 0.5)  # Transfer Time of blank media
+    wTT = (wVOL/wSPD + 0.5)  # Transfer Time of waste media
+    lTT = (lVOL/lSPD + 0.5)  # Transfer Time of concentrated ligand
     pulse = pulse - lTT - bTT
     blank = blank - wash*(numwashes+1) - wTT
     wash = wash - wTT - bTT
@@ -119,8 +119,14 @@ def pulse3(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     # CHECK PARAMETERS
     if (pulse < 0) | (blank < 0) | (wash < 0):
         print("One or more time intervals are too short.")
-        print(pulse,blank,wash)
+        print('Pulse:',pulse,' Blank:',blank,' Wash:',wash)
         return        
+        
+    # PROJECT FLUID USAGE
+    print('Projected fluid usage in mcl---',
+    'Blank:',bVOL*(numpulses + (numpulses-1)*(numwashes+1) + 1),
+    ' Waste:',wVOL*(numpulses + (numpulses-1)*(numwashes+1) + 1),
+    ' Ligand:',lVOL*numpulses)
         
     # SET UP LOGS
     global transferLog
