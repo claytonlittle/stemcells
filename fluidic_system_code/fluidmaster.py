@@ -106,6 +106,7 @@ def pulse3wash(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     wSPD is the speed of waste media in microliters/second
     lSPD is the speed of concentrated ligand in microliters/second
     """
+    params = [wait,pulse,blank,wash,numpulses,numwashes,bmedia,bVOL,wVOL,lVOL,bSPD,wSPD,lSPD]
     ### ADJUST PARAMETERS
     # we change some of the times so that the total intervals are accurate.
     # for example, if the "wash" argument is ten minutes, that does not account
@@ -134,7 +135,8 @@ def pulse3wash(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     global timeLog
     transferLog = "transferLog.txt"
     timeLog = datetime.datetime.fromtimestamp(time.time()).strftime('%y%m%d_%H%M%S') + "_timeLog.txt"
-    updatelog("PULSE EXPERIMENT")
+    updatelog("PULSE EXPERIMENT with params: " + str(params).strip('[]'))
+    app.destroy() #close GUI
     
     # ESTABLISH BASELINE
     time.sleep(wait - (bmedia/bSPD + 0.5))
@@ -201,6 +203,7 @@ def pulse3flow(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     wSPD is the speed of waste media in microliters/second
     lSPD is the speed of concentrated ligand in microliters/second
     """
+    params = [wait,pulse,blank,wash,numpulses,numwashes,bmedia,washVOL,washSPD,bVOL,wVOL,lVOL,bSPD,wSPD,lSPD]
     ### ADJUST PARAMETERS
     # we change some of the times so that the total intervals are accurate.
     # for example, if the "wash" argument is ten minutes, that does not account
@@ -222,7 +225,7 @@ def pulse3flow(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     # PROJECT FLUID USAGE
     print('Projected fluid usage in mcl---',
     'Blank:',bVOL*2*numpulses + washVOL*(numpulses-1)*numwashes,
-    ' Waste:',wVOL*2*numpulses + washVOL*(numpulses-1)*numwashes,
+    ' Waste:',wVOL*(2*numpulses-1) + bmedia + washVOL*(numpulses-1)*numwashes,
     ' Ligand:',lVOL*numpulses)
         
     # SET UP LOGS
@@ -230,7 +233,8 @@ def pulse3flow(wait,pulse,blank,wash,numpulses,numwashes,bmedia,
     global timeLog
     transferLog = "transferLog.txt"
     timeLog = datetime.datetime.fromtimestamp(time.time()).strftime('%y%m%d_%H%M%S') + "_timeLog.txt"
-    updatelog("PULSE EXPERIMENT")
+    updatelog("PULSE EXPERIMENT with params: " + str(params).strip('[]'))
+    app.destroy() #close GUI
     
     # ESTABLISH BASELINE
     time.sleep(wait - (bmedia/bSPD + 0.5))
@@ -457,7 +461,8 @@ class pulse3flowPage(tk.Frame):
     def runfunc(self, controller):
         params = controller.getparams(self.entries)
         pulse3flow(*params)
-
+        
+global app
 app = SyringeGUI()
 app.title('GUI')
 app.mainloop()
